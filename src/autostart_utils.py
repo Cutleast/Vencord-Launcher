@@ -7,11 +7,21 @@ from logging_utils import log_info, log_warning
 def set_autostart(
     enabled: bool, exe_path: Path, reg_name: str = "VencordLauncher"
 ) -> None:
+    """
+    Sets the autostart entry in the registry.
+
+    Args:
+        enabled (bool): True to enable autostart, False to disable.
+        exe_path (Path): The path to the executable file.
+        reg_name (str, optional):
+            The name of the registry key. Defaults to "VencordLauncher".
+    """
+
     log_info(f"set_autostart aufgerufen: enabled={enabled}, exe_path={exe_path}")
     try:
         key = winreg.OpenKey(
             winreg.HKEY_CURRENT_USER,
-            r"Software\Microsoft\Windows\CurrentVersion\Run",
+            "Software\\Microsoft\\Windows\\CurrentVersion\\Run",
             0,
             winreg.KEY_SET_VALUE,
         )
