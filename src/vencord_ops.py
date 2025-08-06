@@ -1,12 +1,15 @@
-import os
-import sys
-import subprocess
 import glob
+import os
+import subprocess
+import sys
 import urllib.request
 from pathlib import Path
-from logging_utils import log_info, log_error, log_warning
+from typing import NoReturn
 
-def find_discord_appdir():
+from logging_utils import log_error, log_info, log_warning
+
+
+def find_discord_appdir() -> Path | NoReturn:
     localappdata = Path(os.environ.get("LOCALAPPDATA", ""))
     discord_dir = localappdata / "Discord"
     app_dirs = sorted(discord_dir.glob("app-*"), reverse=True)
@@ -17,13 +20,15 @@ def find_discord_appdir():
     log_info(f"Found Discord installation: {app_dir}")
     return app_dir
 
-def is_vencord_present(app_dir):
+
+def is_vencord_present(app_dir: Path) -> bool:
     resources_dir = app_dir / "resources"
     found = any(Path(f).exists() for f in glob.glob(str(resources_dir / "_app.asar")))
     log_info("Vencord status: " + ("Installed" if found else "Not installed"))
     return found
 
-def ensure_vencord_cli(cli_path):
+
+def ensure_vencord_cli(cli_path: Path) -> None:
     if cli_path.exists():
         return
     log_warning("VencordInstallerCli.exe not found. Downloading latest version...")
@@ -35,23 +40,30 @@ def ensure_vencord_cli(cli_path):
         log_error(f"Failed to download VencordInstallerCli.exe: {e}")
         sys.exit(1)
 
-def update_vencord_cli(cli_path):
+
+def update_vencord_cli(cli_path: Path) -> None:
     log_info("Checking for updates for VencordInstallerCli...")
     try:
         subprocess.run([str(cli_path), "-update-self"], check=True)
     except subprocess.CalledProcessError:
-        log_warning("VencordInstallerCli self-update failed or no update available (see above).")
+        log_warning(
+            "VencordInstallerCli self-update failed or no update available (see above)."
+        )
 
-def install_openasar(cli_path, branch):
+
+def install_openasar(cli_path: Path, branch: str) -> None:
     log_info(f"Installing OpenAsar for branch '{branch}'...")
     try:
-        subprocess.run([str(cli_path), "-install-openasar", "-branch", branch], check=True)
+        subprocess.run(
+            [str(cli_path), "-install-openasar", "-branch", branch], check=True
+        )
     except subprocess.CalledProcessError as e:
         log_error(f"Error installing OpenAsar: {e}")
         print("Failed to install OpenAsar. Please check manually.")
         sys.exit(1)
 
-def install_vencord(cli_path, branch):
+
+def install_vencord(cli_path: Path, branch: str) -> None:
     log_info(f"Patching Discord ({branch})...")
     try:
         subprocess.run([str(cli_path), "-install", "-branch", branch], check=True)
@@ -60,12 +72,15 @@ def install_vencord(cli_path, branch):
         print("Failed to install Vencord. Please check manually.")
         sys.exit(1)
 
-def start_discord(app_dir, minimized):
+
+def start_discord(app_dir: Path, minimized: bool) -> None:
     exe_path = app_dir / "Discord.exe"
     if not exe_path.exists():
         log_error("Discord.exe not found in latest app-* folder.")
         sys.exit(1)
-    if minimized is True or (isinstance(minimized, str) and minimized.lower() == "true"):
+    if minimized is True or (
+        isinstance(minimized, str) and minimized.lower() == "true"
+    ):
         log_info("Starting Discord minimized...")
         subprocess.Popen([str(exe_path), "--start-minimized"], close_fds=True)
         log_info("Discord started (minimized).")

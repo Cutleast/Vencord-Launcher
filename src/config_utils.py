@@ -1,14 +1,17 @@
-from pathlib import Path
 import sys
+from pathlib import Path
+
 import json5
+
 from logging_utils import log_error, log_info, log_warning
 
-def load_config(configfile_path):
+
+def load_config(configfile_path: Path):
     CONFIGFILE = Path(configfile_path)
     if not CONFIGFILE.exists():
         log_error("config.json not found!")
         sys.exit(1)
-    with open(CONFIGFILE, encoding='utf-8') as f:
+    with open(CONFIGFILE, encoding="utf-8") as f:
         raw_config = json5.load(f)
     config = {k.lower(): v for k, v in raw_config.items()}
     if "branch" not in config:
@@ -33,5 +36,5 @@ def load_config(configfile_path):
         config["branch"],
         config["openasar"],
         config["autostart"],
-        config["startdiscordminimized"]
+        config["startdiscordminimized"],
     )
