@@ -1,0 +1,35 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"extensions": {
+		"recommendations": [
+			"njpwerner.autodocstring",
+			"ms-python.vscode-pylance",
+			"ms-python.python",
+			"charliermarsh.ruff",
+			"gruntfuggly.todo-tree"
+		]
+	},
+	"settings": {
+		"[python]": {
+			"editor.codeActionsOnSave": {
+				"source.organizeImports.ruff": "explicit"
+			}
+		},
+		"editor.formatOnSave": true,
+		"python.analysis.autoFormatStrings": true,
+		"python.analysis.autoImportCompletions": true,
+		"python.analysis.diagnosticMode": "workspace",
+		"python.analysis.generateWithTypeAnnotation": true,
+		"python.analysis.languageServerMode": "full",
+		"python.analysis.typeCheckingMode": "strict",
+		"todo-tree.filtering.excludeGlobs": [
+			".venv/**",
+		],
+		"todo-tree.highlights.enabled": false,
+		"autoDocstring.startOnNewLine": true
+	}
+}
