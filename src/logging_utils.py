@@ -1,5 +1,6 @@
 from datetime import datetime
 from pathlib import Path
+from typing import Optional
 
 RED = "\033[91m"
 GREEN = "\033[92m"
@@ -8,37 +9,37 @@ BLUE = "\033[94m"
 BOLD = "\033[1m"
 RESET = "\033[0m"
 
-LOGFILE = None
+logfile: Optional[Path] = None
 
 
-def init_logfile(logfile_path):
-    global LOGFILE
-    LOGFILE = Path(logfile_path)
-    if LOGFILE.exists():
-        LOGFILE.unlink()
+def init_logfile(logfile_path: Path) -> None:
+    global logfile
+    logfile = Path(logfile_path)
+    if logfile.exists():
+        logfile.unlink()
 
 
-def write_logfile(line):
-    if LOGFILE is None:
+def write_logfile(line: str) -> None:
+    if logfile is None:
         return
-    with open(LOGFILE, "a", encoding="utf-8") as f:
+    with open(logfile, "a", encoding="utf-8") as f:
         f.write(line + "\n")
 
 
-def log_with_type(prefix, color, msg):
+def log_with_type(prefix: str, color: str, msg: str) -> None:
     ts = datetime.now().strftime("[%Y-%m-%d %H:%M:%S]")
     line = f"{ts} {prefix} {msg}"
     print(f"{color}{prefix}{RESET} {msg}")
     write_logfile(line)
 
 
-def log_error(msg):
+def log_error(msg: str) -> None:
     log_with_type("ERROR", RED + BOLD, msg)
 
 
-def log_info(msg):
+def log_info(msg: str) -> None:
     log_with_type("INFO ", BLUE, msg)
 
 
-def log_warning(msg):
+def log_warning(msg: str) -> None:
     log_with_type("Warning:", YELLOW, msg)
